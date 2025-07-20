@@ -34,7 +34,10 @@ SmartCaps transforms your CapsLock key into a powerful text manipulation tool wh
 1. With text selected:
     - Press CapsLock to instantly invert text case
     - Example: Hello World → hELLO wORLD
-
 2. Without text selected:
     - CapsLock toggles normally
     - No clipboard disruption
+
+## Usage Notes
+  - Runs silently in background
+  - Disable by ending "SmartCaps" process in Task Manager
