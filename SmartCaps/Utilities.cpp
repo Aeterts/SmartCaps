@@ -2,33 +2,27 @@
 
 void SendKey(WORD VkCode)
 {
-    INPUT ip = { 0 };
-    ip.type = INPUT_KEYBOARD;
-    ip.ki.wVk = VkCode;
-    SendInput(1, &ip, sizeof(INPUT));
-
-    ip.ki.dwFlags = KEYEVENTF_KEYUP;
-    SendInput(1, &ip, sizeof(INPUT));
+    SendKeyState(VkCode, INPUT_KEYBOARD, 0);
+    SendKeyState(VkCode, INPUT_KEYBOARD, KEYEVENTF_KEYUP);
 }
 
 void SendKeys(const std::vector<WORD>& VkCodes)
 {
     for (WORD VkCode : VkCodes)
-    {
-        INPUT Input = {0};
-        Input.type = INPUT_KEYBOARD;
-        Input.ki.wVk = VkCode;
-
-        SendInput(1, &Input, sizeof(INPUT));
-    }
+        SendKeyState(VkCode, INPUT_KEYBOARD, 0);
 
     for (WORD VkCode : VkCodes)
-    {
-        INPUT ip = {0};
-        ip.type = INPUT_KEYBOARD;
-        ip.ki.wVk = VkCode;
-        ip.ki.dwFlags = KEYEVENTF_KEYUP;
+        SendKeyState(VkCode, INPUT_KEYBOARD, KEYEVENTF_KEYUP);
+}
 
-        SendInput(1, &ip, sizeof(INPUT));
-    }
+void SendKeyState(WORD VkCode, DWORD KeyType, DWORD KeyFlags)
+{
+    INPUT Input = { 0 };
+    Input.type = KeyType;
+    Input.ki.wVk = VkCode;
+
+    if (KeyFlags > 0)
+        Input.ki.dwFlags = KeyFlags;
+
+    SendInput(1, &Input, sizeof(INPUT));
 }

@@ -45,31 +45,38 @@ void HandleClipboardOperation()
 
     if (bHasSelection)
     {
-        std::wstring NewText = InvertTextCase(SelectedText);
-
-        if (OpenClipboard(nullptr))
+        try
         {
-            EmptyClipboard();
+            std::wstring NewText = InvertTextCase(SelectedText);
 
-            HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (NewText.length() + 1) * sizeof(wchar_t));
-
-            if (hMem)
+            if (OpenClipboard(nullptr))
             {
-                wchar_t* Buffer = static_cast<wchar_t*>(GlobalLock(hMem));
+                EmptyClipboard();
 
-                if (Buffer)
+                HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (NewText.length() + 1) * sizeof(wchar_t));
+
+                if (hMem)
                 {
-                    wcscpy_s(Buffer, NewText.length() + 1, NewText.c_str());
-                    GlobalUnlock(hMem);
-                    SetClipboardData(CF_UNICODETEXT, hMem);
+                    wchar_t* Buffer = static_cast<wchar_t*>(GlobalLock(hMem));
+
+                    if (Buffer)
+                    {
+                        wcscpy_s(Buffer, NewText.length() + 1, NewText.c_str());
+                        GlobalUnlock(hMem);
+                        SetClipboardData(CF_UNICODETEXT, hMem);
+                    }
                 }
+
+                CloseClipboard();
             }
 
-            CloseClipboard();
+            SendKeys({ VK_CONTROL , 'V' });
+            Sleep(30);
         }
-
-        SendKeys({ VK_CONTROL , 'V' });
-        Sleep(30);
+        catch (...)
+        {
+            ToggleCapsLock();
+        }
     }
     else
     {
